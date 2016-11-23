@@ -1,0 +1,19 @@
+version: '2'
+services:
+  db:
+    image: postgres
+    environment:
+        - POSTGRES_PASSWORD=docker
+        - POSTGRES_USER=docker
+  api:
+    build:
+       context: .
+       dockerfile: build/api
+    volumes:
+        - ./check_list:/opt/check_list
+    depends_on:
+      - "db"
+    command: bash -c "export PGPASSWORD='docker' && until psql -h \"db\" -U \"docker\" -c '\l'; do >&2 echo \"Postgres is unavailable - sleeping\"; sleep 1; done && cd /opt/check_list && python manage.py makemigrations check_list && python manage.py migrate && python manage.py default && python manage.py runserver 0.0.0.0:8000"
+    ports:
+      - "8000:8000"
+  

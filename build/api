@@ -1,0 +1,9 @@
+FROM ubuntu
+
+RUN apt-get update
+RUN apt-get install -y libpq-dev python-dev python-pip postgresql-client
+RUN pip install --upgrade pip
+RUN mkdir /opt/check_list
+COPY check_list /opt/check_list
+RUN cd /opt/check_list
+RUN pip install -r /opt/check_list/requirements.txt
